@@ -164,7 +164,19 @@ namespace sampleFactCsharp
                 case "GetWatchlist":
 
 
-                    speech_message = "There are 5 stocks for you. ";
+					WebRequest req = HttpWebRequest.Create("https://webshockinnovations.com/ubhackathonapi/api.php");
+						WebResponse res = req.GetResponse();
+					StreamReader reader = new StreamReader(res.GetResponseStream());
+
+					string json = reader.ReadToEnd();
+
+					List<WatchlistObject> watchlist = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WatchlistObject>>(json);
+					string stocks = "";
+					foreach(WatchlistObject watch  in watchlist)
+					{
+						stocks += watch.stock + ", ";
+					}
+					speech_message = "Your watchlist contains " + watchlist.Count.ToString() + " stocks.  They are: " + stocks;
                     if (!string.IsNullOrEmpty(speech_message))
                     {
                         response.Response.OutputSpeech = new SsmlOutputSpeech();
